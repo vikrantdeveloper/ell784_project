@@ -61,8 +61,8 @@ all: main-build
 main-build: esp8266_stm32.elf secondary-outputs
 
 # Tool invocations
-esp8266_stm32.elf esp8266_stm32.map: $(OBJS) $(USER_OBJS) /home/vikrant/msr_iitd/IITD_MS_Research/Smart\ Monitoring/esp8266_stm32/STM32F722ZETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "esp8266_stm32.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"/home/vikrant/msr_iitd/IITD_MS_Research/Smart Monitoring/esp8266_stm32/STM32F722ZETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="esp8266_stm32.map" -Wl,--gc-sections -static  -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+esp8266_stm32.elf esp8266_stm32.map: $(OBJS) $(USER_OBJS) /home/vikrant/msr_iitd/projects/APMD/esp8266_stm32/STM32F722ZETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "esp8266_stm32.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"/home/vikrant/msr_iitd/projects/APMD/esp8266_stm32/STM32F722ZETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="esp8266_stm32.map" -Wl,--gc-sections -static  -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

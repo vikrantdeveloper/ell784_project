@@ -125,6 +125,7 @@ wifi_api_status wifi_send_fl_data(float buf[] , int len)
 		Wifi_Uart_t.WiFi_Tx_len = 4;
 		uart_byte_write(Wifi_Uart_t.fl_con_u8_pt.u);
 	}
+	return LucStatus;
 }
 /*
  * initialise the wifi - esp8266 via AT commands initialise the UART
