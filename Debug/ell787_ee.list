@@ -1,5 +1,5 @@
 
-esp8266_stm32.elf:     file format elf32-littlearm
+ell787_ee.elf:     file format elf32-littlearm
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn

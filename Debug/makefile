@@ -35,34 +35,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := esp8266_stm32
+BUILD_ARTIFACT_NAME := ell787_ee
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-esp8266_stm32.elf \
+ell787_ee.elf \
 
 MAP_FILES += \
-esp8266_stm32.map \
+ell787_ee.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-esp8266_stm32.list \
+ell787_ee.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: esp8266_stm32.elf secondary-outputs
+main-build: ell787_ee.elf secondary-outputs
 
 # Tool invocations
-esp8266_stm32.elf esp8266_stm32.map: $(OBJS) $(USER_OBJS) /home/vikrant/msr_iitd/projects/APMD/esp8266_stm32/STM32F722ZETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "esp8266_stm32.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"/home/vikrant/msr_iitd/projects/APMD/esp8266_stm32/STM32F722ZETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="esp8266_stm32.map" -Wl,--gc-sections -static  -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+ell787_ee.elf ell787_ee.map: $(OBJS) $(USER_OBJS) /home/vikrant/msr_iitd/projects/APMD/esp8266_stm32/STM32F722ZETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "ell787_ee.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"/home/vikrant/msr_iitd/projects/APMD/esp8266_stm32/STM32F722ZETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ell787_ee.map" -Wl,--gc-sections -static  -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -71,14 +71,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-esp8266_stm32.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "esp8266_stm32.list"
+ell787_ee.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "ell787_ee.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) default.size.stdout esp8266_stm32.elf esp8266_stm32.list esp8266_stm32.map
+	-$(RM) default.size.stdout ell787_ee.elf ell787_ee.list ell787_ee.map
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
