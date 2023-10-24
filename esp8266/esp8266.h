@@ -1,14 +1,5 @@
 #ifndef __ESP8266__
 
-
-#include "main.h"
-#include "stm32f7xx_hal_uart.h"
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-
-
 #define UART_WIFI_CMD            USART2
 #define UART_CONSOLE             huart3
 #define CR                       "\r"
@@ -16,7 +7,7 @@
 
 #define WIFI_START_CMD      	"AT\r\n"                                            /*start command*/
 #define WIFI_RST_CMD        	"AT+RST\r\n"										/*reset command*/
-#define WIFI_MODE_CMD(x)        "AT+CWMODE="#x CR NR							        /*access point mode configuration command*/
+#define WIFI_MODE_CMD(x)        "AT+CWMODE="#x CR NR							    /*access point mode configuration command*/
 #define WIFI_CONNECT_AP_CMD   	"AT+CWJAP=\"%s\",\"%s\"\r\n" 			            /*connect to access point ssid ,psk*/
 #define WIFI_GMR_CMD            "AT+GMR\r\n"
 #define WIFI_MAC_CMD            "AT+CIFSR\r\n"
@@ -79,6 +70,7 @@ wifi_api_status wifi_mac_add();
 wifi_api_status tcp_server_conn();
 wifi_api_status wifi_send_fl_data(float buf[] , int len);
 
+int _write(int file, char *ptr, int len);
 
 
 #ifdef __cplusplus

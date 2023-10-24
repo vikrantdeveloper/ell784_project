@@ -1,3 +1,4 @@
+#include "common.h"
 #include "esp8266.h"
 
 UART_HandleTypeDef wifi_uart;
@@ -29,22 +30,7 @@ int _write(int file, char *ptr, int len)
 {
 	HAL_StatusTypeDef ret = HAL_UART_Transmit(&UART_CONSOLE , (uint8_t *)ptr, len , 100);
 	UNUSED(ret);
-}
-static void console_buf_wr(char *console_buf , size_t *console_buf_len)
-{
-	size_t len = *console_buf_len;
-	console_buf[len] ='\0';
-	for(size_t i = 0; i < len; i++)
-	  {
-		 _write(stdout, &console_buf[i], 1);
-	  }
-}
-static void console_buf_clr(char *console_buf , size_t *console_buf_len)
-{
-	size_t len = *console_buf_len;
-	memset(console_buf  , 0 , len);
-	*console_buf_len = 0;
-
+	return ret;
 }
 static wifi_api_status uart_write(char *buffer)
 {
@@ -123,7 +109,7 @@ wifi_api_status wifi_send_fl_data(float buf[] , int len)
 	{
 		Wifi_Uart_t.fl_con_u8_pt.f = buf[j];
 		Wifi_Uart_t.WiFi_Tx_len = 4;
-		uart_byte_write(Wifi_Uart_t.fl_con_u8_pt.u);
+		LucStatus = uart_byte_write(Wifi_Uart_t.fl_con_u8_pt.u);
 	}
 	return LucStatus;
 }

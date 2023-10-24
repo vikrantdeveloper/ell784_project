@@ -29,23 +29,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  12 .comment      00000043  00000000  00000000  000206ec  2**0
                   CONTENTS, READONLY
- 13 .debug_info   0000cbba  00000000  00000000  0002072f  2**0
+ 13 .debug_info   0000d34b  00000000  00000000  0002072f  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_abbrev 00002084  00000000  00000000  0002d2e9  2**0
+ 14 .debug_abbrev 00002286  00000000  00000000  0002da7a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_aranges 00000940  00000000  00000000  0002f370  2**3
+ 15 .debug_aranges 00000968  00000000  00000000  0002fd00  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_rnglists 000006fe  00000000  00000000  0002fcb0  2**0
+ 16 .debug_rnglists 00000717  00000000  00000000  00030668  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_macro  00022e14  00000000  00000000  000303ae  2**0
+ 17 .debug_macro  00023b42  00000000  00000000  00030d7f  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   0000bc36  00000000  00000000  000531c2  2**0
+ 18 .debug_line   0000c639  00000000  00000000  000548c1  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000d4fde  00000000  00000000  0005edf8  2**0
+ 19 .debug_str    000dda79  00000000  00000000  00060efa  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_frame  00003774  00000000  00000000  00133dd8  2**2
+ 20 .debug_frame  000037b8  00000000  00000000  0013e974  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000061  00000000  00000000  0013754c  2**0
+ 21 .debug_line_str 00000061  00000000  00000000  0014212c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -10103,181 +10103,185 @@ static void UART_RxISR_16BIT(UART_HandleTypeDef *huart)
  80043a0:	bd80      	pop	{r7, pc}
 	...
 
-080043a4 <UART_Init>:
+080043a4 <console_buf_wr>:
+  }
+  /* USER CODE END TIM16_Init 1 */
+}
+
+void console_buf_wr(char *console_buf , size_t *console_buf_len)
+{
+ 80043a4:	b580      	push	{r7, lr}
+ 80043a6:	b084      	sub	sp, #16
+ 80043a8:	af00      	add	r7, sp, #0
+ 80043aa:	6078      	str	r0, [r7, #4]
+ 80043ac:	6039      	str	r1, [r7, #0]
+	size_t len = *console_buf_len;
+ 80043ae:	683b      	ldr	r3, [r7, #0]
+ 80043b0:	681b      	ldr	r3, [r3, #0]
+ 80043b2:	60bb      	str	r3, [r7, #8]
+	console_buf[len] ='\0';
+ 80043b4:	687a      	ldr	r2, [r7, #4]
+ 80043b6:	68bb      	ldr	r3, [r7, #8]
+ 80043b8:	4413      	add	r3, r2
+ 80043ba:	2200      	movs	r2, #0
+ 80043bc:	701a      	strb	r2, [r3, #0]
+	for(size_t i = 0; i < len; i++)
+ 80043be:	2300      	movs	r3, #0
+ 80043c0:	60fb      	str	r3, [r7, #12]
+ 80043c2:	e00d      	b.n	80043e0 <console_buf_wr+0x3c>
+	  {
+		 _write(stdout, &console_buf[i], 1);
+ 80043c4:	4b0b      	ldr	r3, [pc, #44]	; (80043f4 <console_buf_wr+0x50>)
+ 80043c6:	681b      	ldr	r3, [r3, #0]
+ 80043c8:	689b      	ldr	r3, [r3, #8]
+ 80043ca:	4618      	mov	r0, r3
+ 80043cc:	687a      	ldr	r2, [r7, #4]
+ 80043ce:	68fb      	ldr	r3, [r7, #12]
+ 80043d0:	4413      	add	r3, r2
+ 80043d2:	2201      	movs	r2, #1
+ 80043d4:	4619      	mov	r1, r3
+ 80043d6:	f000 f853 	bl	8004480 <_write>
+	for(size_t i = 0; i < len; i++)
+ 80043da:	68fb      	ldr	r3, [r7, #12]
+ 80043dc:	3301      	adds	r3, #1
+ 80043de:	60fb      	str	r3, [r7, #12]
+ 80043e0:	68fa      	ldr	r2, [r7, #12]
+ 80043e2:	68bb      	ldr	r3, [r7, #8]
+ 80043e4:	429a      	cmp	r2, r3
+ 80043e6:	d3ed      	bcc.n	80043c4 <console_buf_wr+0x20>
+	  }
+}
+ 80043e8:	bf00      	nop
+ 80043ea:	bf00      	nop
+ 80043ec:	3710      	adds	r7, #16
+ 80043ee:	46bd      	mov	sp, r7
+ 80043f0:	bd80      	pop	{r7, pc}
+ 80043f2:	bf00      	nop
+ 80043f4:	20000548 	.word	0x20000548
+
+080043f8 <console_buf_clr>:
+void console_buf_clr(char *console_buf , size_t *console_buf_len)
+{
+ 80043f8:	b580      	push	{r7, lr}
+ 80043fa:	b084      	sub	sp, #16
+ 80043fc:	af00      	add	r7, sp, #0
+ 80043fe:	6078      	str	r0, [r7, #4]
+ 8004400:	6039      	str	r1, [r7, #0]
+	size_t len = *console_buf_len;
+ 8004402:	683b      	ldr	r3, [r7, #0]
+ 8004404:	681b      	ldr	r3, [r3, #0]
+ 8004406:	60fb      	str	r3, [r7, #12]
+	memset(console_buf  , 0 , len);
+ 8004408:	68fa      	ldr	r2, [r7, #12]
+ 800440a:	2100      	movs	r1, #0
+ 800440c:	6878      	ldr	r0, [r7, #4]
+ 800440e:	f000 fcd6 	bl	8004dbe <memset>
+	*console_buf_len = 0;
+ 8004412:	683b      	ldr	r3, [r7, #0]
+ 8004414:	2200      	movs	r2, #0
+ 8004416:	601a      	str	r2, [r3, #0]
+}
+ 8004418:	bf00      	nop
+ 800441a:	3710      	adds	r7, #16
+ 800441c:	46bd      	mov	sp, r7
+ 800441e:	bd80      	pop	{r7, pc}
+
+08004420 <UART_Init>:
 Wifi_Uart Wifi_Uart_t;
 char tmp;
 
 
 void UART_Init(void)
 {
- 80043a4:	b580      	push	{r7, lr}
- 80043a6:	af00      	add	r7, sp, #0
+ 8004420:	b580      	push	{r7, lr}
+ 8004422:	af00      	add	r7, sp, #0
   /* USER CODE BEGIN UART5_Init 2 */
   wifi_uart.Instance = UART_WIFI_CMD;
- 80043a8:	4b14      	ldr	r3, [pc, #80]	; (80043fc <UART_Init+0x58>)
- 80043aa:	4a15      	ldr	r2, [pc, #84]	; (8004400 <UART_Init+0x5c>)
- 80043ac:	601a      	str	r2, [r3, #0]
+ 8004424:	4b14      	ldr	r3, [pc, #80]	; (8004478 <UART_Init+0x58>)
+ 8004426:	4a15      	ldr	r2, [pc, #84]	; (800447c <UART_Init+0x5c>)
+ 8004428:	601a      	str	r2, [r3, #0]
   wifi_uart.Init.BaudRate = 115200;
- 80043ae:	4b13      	ldr	r3, [pc, #76]	; (80043fc <UART_Init+0x58>)
- 80043b0:	f44f 32e1 	mov.w	r2, #115200	; 0x1c200
- 80043b4:	605a      	str	r2, [r3, #4]
+ 800442a:	4b13      	ldr	r3, [pc, #76]	; (8004478 <UART_Init+0x58>)
+ 800442c:	f44f 32e1 	mov.w	r2, #115200	; 0x1c200
+ 8004430:	605a      	str	r2, [r3, #4]
   wifi_uart.Init.WordLength = UART_WORDLENGTH_8B;
- 80043b6:	4b11      	ldr	r3, [pc, #68]	; (80043fc <UART_Init+0x58>)
- 80043b8:	2200      	movs	r2, #0
- 80043ba:	609a      	str	r2, [r3, #8]
+ 8004432:	4b11      	ldr	r3, [pc, #68]	; (8004478 <UART_Init+0x58>)
+ 8004434:	2200      	movs	r2, #0
+ 8004436:	609a      	str	r2, [r3, #8]
   wifi_uart.Init.StopBits = UART_STOPBITS_1;
- 80043bc:	4b0f      	ldr	r3, [pc, #60]	; (80043fc <UART_Init+0x58>)
- 80043be:	2200      	movs	r2, #0
- 80043c0:	60da      	str	r2, [r3, #12]
+ 8004438:	4b0f      	ldr	r3, [pc, #60]	; (8004478 <UART_Init+0x58>)
+ 800443a:	2200      	movs	r2, #0
+ 800443c:	60da      	str	r2, [r3, #12]
   wifi_uart.Init.Parity = UART_PARITY_NONE;
- 80043c2:	4b0e      	ldr	r3, [pc, #56]	; (80043fc <UART_Init+0x58>)
- 80043c4:	2200      	movs	r2, #0
- 80043c6:	611a      	str	r2, [r3, #16]
+ 800443e:	4b0e      	ldr	r3, [pc, #56]	; (8004478 <UART_Init+0x58>)
+ 8004440:	2200      	movs	r2, #0
+ 8004442:	611a      	str	r2, [r3, #16]
   wifi_uart.Init.Mode = UART_MODE_TX_RX;
- 80043c8:	4b0c      	ldr	r3, [pc, #48]	; (80043fc <UART_Init+0x58>)
- 80043ca:	220c      	movs	r2, #12
- 80043cc:	615a      	str	r2, [r3, #20]
+ 8004444:	4b0c      	ldr	r3, [pc, #48]	; (8004478 <UART_Init+0x58>)
+ 8004446:	220c      	movs	r2, #12
+ 8004448:	615a      	str	r2, [r3, #20]
   wifi_uart.Init.HwFlowCtl = UART_HWCONTROL_NONE;
- 80043ce:	4b0b      	ldr	r3, [pc, #44]	; (80043fc <UART_Init+0x58>)
- 80043d0:	2200      	movs	r2, #0
- 80043d2:	619a      	str	r2, [r3, #24]
+ 800444a:	4b0b      	ldr	r3, [pc, #44]	; (8004478 <UART_Init+0x58>)
+ 800444c:	2200      	movs	r2, #0
+ 800444e:	619a      	str	r2, [r3, #24]
   wifi_uart.Init.OverSampling = UART_OVERSAMPLING_16;
- 80043d4:	4b09      	ldr	r3, [pc, #36]	; (80043fc <UART_Init+0x58>)
- 80043d6:	2200      	movs	r2, #0
- 80043d8:	61da      	str	r2, [r3, #28]
+ 8004450:	4b09      	ldr	r3, [pc, #36]	; (8004478 <UART_Init+0x58>)
+ 8004452:	2200      	movs	r2, #0
+ 8004454:	61da      	str	r2, [r3, #28]
   wifi_uart.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
- 80043da:	4b08      	ldr	r3, [pc, #32]	; (80043fc <UART_Init+0x58>)
- 80043dc:	2200      	movs	r2, #0
- 80043de:	621a      	str	r2, [r3, #32]
+ 8004456:	4b08      	ldr	r3, [pc, #32]	; (8004478 <UART_Init+0x58>)
+ 8004458:	2200      	movs	r2, #0
+ 800445a:	621a      	str	r2, [r3, #32]
   wifi_uart.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
- 80043e0:	4b06      	ldr	r3, [pc, #24]	; (80043fc <UART_Init+0x58>)
- 80043e2:	2200      	movs	r2, #0
- 80043e4:	625a      	str	r2, [r3, #36]	; 0x24
+ 800445c:	4b06      	ldr	r3, [pc, #24]	; (8004478 <UART_Init+0x58>)
+ 800445e:	2200      	movs	r2, #0
+ 8004460:	625a      	str	r2, [r3, #36]	; 0x24
   if (HAL_UART_Init(&wifi_uart) != HAL_OK)
- 80043e6:	4805      	ldr	r0, [pc, #20]	; (80043fc <UART_Init+0x58>)
- 80043e8:	f7fe fcfa 	bl	8002de0 <HAL_UART_Init>
- 80043ec:	4603      	mov	r3, r0
- 80043ee:	2b00      	cmp	r3, #0
- 80043f0:	d001      	beq.n	80043f6 <UART_Init+0x52>
+ 8004462:	4805      	ldr	r0, [pc, #20]	; (8004478 <UART_Init+0x58>)
+ 8004464:	f7fe fcbc 	bl	8002de0 <HAL_UART_Init>
+ 8004468:	4603      	mov	r3, r0
+ 800446a:	2b00      	cmp	r3, #0
+ 800446c:	d001      	beq.n	8004472 <UART_Init+0x52>
   {
     Error_Handler();
- 80043f2:	f7fc ff37 	bl	8001264 <Error_Handler>
+ 800446e:	f7fc fef9 	bl	8001264 <Error_Handler>
   }
   /* USER CODE END UART5_Init 2 */
 }
- 80043f6:	bf00      	nop
- 80043f8:	bd80      	pop	{r7, pc}
- 80043fa:	bf00      	nop
- 80043fc:	20000764 	.word	0x20000764
- 8004400:	40004400 	.word	0x40004400
+ 8004472:	bf00      	nop
+ 8004474:	bd80      	pop	{r7, pc}
+ 8004476:	bf00      	nop
+ 8004478:	20000764 	.word	0x20000764
+ 800447c:	40004400 	.word	0x40004400
 
-08004404 <_write>:
+08004480 <_write>:
 
 int _write(int file, char *ptr, int len)
 {
- 8004404:	b580      	push	{r7, lr}
- 8004406:	b086      	sub	sp, #24
- 8004408:	af00      	add	r7, sp, #0
- 800440a:	60f8      	str	r0, [r7, #12]
- 800440c:	60b9      	str	r1, [r7, #8]
- 800440e:	607a      	str	r2, [r7, #4]
+ 8004480:	b580      	push	{r7, lr}
+ 8004482:	b086      	sub	sp, #24
+ 8004484:	af00      	add	r7, sp, #0
+ 8004486:	60f8      	str	r0, [r7, #12]
+ 8004488:	60b9      	str	r1, [r7, #8]
+ 800448a:	607a      	str	r2, [r7, #4]
 	HAL_StatusTypeDef ret = HAL_UART_Transmit(&UART_CONSOLE , (uint8_t *)ptr, len , 100);
- 8004410:	687b      	ldr	r3, [r7, #4]
- 8004412:	b29a      	uxth	r2, r3
- 8004414:	2364      	movs	r3, #100	; 0x64
- 8004416:	68b9      	ldr	r1, [r7, #8]
- 8004418:	4804      	ldr	r0, [pc, #16]	; (800442c <_write+0x28>)
- 800441a:	f7fe fd2f 	bl	8002e7c <HAL_UART_Transmit>
- 800441e:	4603      	mov	r3, r0
- 8004420:	75fb      	strb	r3, [r7, #23]
+ 800448c:	687b      	ldr	r3, [r7, #4]
+ 800448e:	b29a      	uxth	r2, r3
+ 8004490:	2364      	movs	r3, #100	; 0x64
+ 8004492:	68b9      	ldr	r1, [r7, #8]
+ 8004494:	4804      	ldr	r0, [pc, #16]	; (80044a8 <_write+0x28>)
+ 8004496:	f7fe fcf1 	bl	8002e7c <HAL_UART_Transmit>
+ 800449a:	4603      	mov	r3, r0
+ 800449c:	75fb      	strb	r3, [r7, #23]
 	UNUSED(ret);
+	return ret;
+ 800449e:	7dfb      	ldrb	r3, [r7, #23]
 }
- 8004422:	bf00      	nop
- 8004424:	4618      	mov	r0, r3
- 8004426:	3718      	adds	r7, #24
- 8004428:	46bd      	mov	sp, r7
- 800442a:	bd80      	pop	{r7, pc}
- 800442c:	200006d8 	.word	0x200006d8
-
-08004430 <console_buf_wr>:
-static void console_buf_wr(char *console_buf , size_t *console_buf_len)
-{
- 8004430:	b580      	push	{r7, lr}
- 8004432:	b084      	sub	sp, #16
- 8004434:	af00      	add	r7, sp, #0
- 8004436:	6078      	str	r0, [r7, #4]
- 8004438:	6039      	str	r1, [r7, #0]
-	size_t len = *console_buf_len;
- 800443a:	683b      	ldr	r3, [r7, #0]
- 800443c:	681b      	ldr	r3, [r3, #0]
- 800443e:	60bb      	str	r3, [r7, #8]
-	console_buf[len] ='\0';
- 8004440:	687a      	ldr	r2, [r7, #4]
- 8004442:	68bb      	ldr	r3, [r7, #8]
- 8004444:	4413      	add	r3, r2
- 8004446:	2200      	movs	r2, #0
- 8004448:	701a      	strb	r2, [r3, #0]
-	for(size_t i = 0; i < len; i++)
- 800444a:	2300      	movs	r3, #0
- 800444c:	60fb      	str	r3, [r7, #12]
- 800444e:	e00d      	b.n	800446c <console_buf_wr+0x3c>
-	  {
-		 _write(stdout, &console_buf[i], 1);
- 8004450:	4b0b      	ldr	r3, [pc, #44]	; (8004480 <console_buf_wr+0x50>)
- 8004452:	681b      	ldr	r3, [r3, #0]
- 8004454:	689b      	ldr	r3, [r3, #8]
- 8004456:	4618      	mov	r0, r3
- 8004458:	687a      	ldr	r2, [r7, #4]
- 800445a:	68fb      	ldr	r3, [r7, #12]
- 800445c:	4413      	add	r3, r2
- 800445e:	2201      	movs	r2, #1
- 8004460:	4619      	mov	r1, r3
- 8004462:	f7ff ffcf 	bl	8004404 <_write>
-	for(size_t i = 0; i < len; i++)
- 8004466:	68fb      	ldr	r3, [r7, #12]
- 8004468:	3301      	adds	r3, #1
- 800446a:	60fb      	str	r3, [r7, #12]
- 800446c:	68fa      	ldr	r2, [r7, #12]
- 800446e:	68bb      	ldr	r3, [r7, #8]
- 8004470:	429a      	cmp	r2, r3
- 8004472:	d3ed      	bcc.n	8004450 <console_buf_wr+0x20>
-	  }
-}
- 8004474:	bf00      	nop
- 8004476:	bf00      	nop
- 8004478:	3710      	adds	r7, #16
- 800447a:	46bd      	mov	sp, r7
- 800447c:	bd80      	pop	{r7, pc}
- 800447e:	bf00      	nop
- 8004480:	20000548 	.word	0x20000548
-
-08004484 <console_buf_clr>:
-static void console_buf_clr(char *console_buf , size_t *console_buf_len)
-{
- 8004484:	b580      	push	{r7, lr}
- 8004486:	b084      	sub	sp, #16
- 8004488:	af00      	add	r7, sp, #0
- 800448a:	6078      	str	r0, [r7, #4]
- 800448c:	6039      	str	r1, [r7, #0]
-	size_t len = *console_buf_len;
- 800448e:	683b      	ldr	r3, [r7, #0]
- 8004490:	681b      	ldr	r3, [r3, #0]
- 8004492:	60fb      	str	r3, [r7, #12]
-	memset(console_buf  , 0 , len);
- 8004494:	68fa      	ldr	r2, [r7, #12]
- 8004496:	2100      	movs	r1, #0
- 8004498:	6878      	ldr	r0, [r7, #4]
- 800449a:	f000 fc90 	bl	8004dbe <memset>
-	*console_buf_len = 0;
- 800449e:	683b      	ldr	r3, [r7, #0]
- 80044a0:	2200      	movs	r2, #0
- 80044a2:	601a      	str	r2, [r3, #0]
-
-}
- 80044a4:	bf00      	nop
- 80044a6:	3710      	adds	r7, #16
- 80044a8:	46bd      	mov	sp, r7
- 80044aa:	bd80      	pop	{r7, pc}
+ 80044a0:	4618      	mov	r0, r3
+ 80044a2:	3718      	adds	r7, #24
+ 80044a4:	46bd      	mov	sp, r7
+ 80044a6:	bd80      	pop	{r7, pc}
+ 80044a8:	200006d8 	.word	0x200006d8
 
 080044ac <uart_write>:
 static wifi_api_status uart_write(char *buffer)
@@ -10522,7 +10526,7 @@ void wifi_init()
  800462c:	b580      	push	{r7, lr}
  800462e:	af00      	add	r7, sp, #0
 	UART_Init();
- 8004630:	f7ff feb8 	bl	80043a4 <UART_Init>
+ 8004630:	f7ff fef6 	bl	8004420 <UART_Init>
 
 	Wifi_Uart_t.WiFi_Rx_len = 0;
  8004634:	4b0d      	ldr	r3, [pc, #52]	; (800466c <wifi_init+0x40>)
@@ -10556,8 +10560,8 @@ void wifi_init()
  800466a:	bd80      	pop	{r7, pc}
  800466c:	200007e8 	.word	0x200007e8
  8004670:	200007f4 	.word	0x200007f4
- 8004674:	08004431 	.word	0x08004431
- 8004678:	08004485 	.word	0x08004485
+ 8004674:	080043a5 	.word	0x080043a5
+ 8004678:	080043f9 	.word	0x080043f9
  800467c:	20000a04 	.word	0x20000a04
  8004680:	20000764 	.word	0x20000764
 
@@ -11393,7 +11397,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  8004e62:	2200      	movs	r2, #0
  8004e64:	602a      	str	r2, [r5, #0]
  8004e66:	461a      	mov	r2, r3
- 8004e68:	f7ff facc 	bl	8004404 <_write>
+ 8004e68:	f7ff fb0a 	bl	8004480 <_write>
  8004e6c:	1c43      	adds	r3, r0, #1
  8004e6e:	d102      	bne.n	8004e76 <_write_r+0x1e>
  8004e70:	682b      	ldr	r3, [r5, #0]

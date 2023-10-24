@@ -5,6 +5,7 @@
 "./Core/Src/sysmem.o"
 "./Core/Src/system_stm32f7xx.o"
 "./Core/Startup/startup_stm32f722zetx.o"
+"./DTH11/dth11.o"
 "./Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.o"
 "./Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.o"
 "./Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma.o"
@@ -26,4 +27,5 @@
 "./Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart.o"
 "./Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart_ex.o"
 "./Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_usb.o"
+"./Include/common.o"
 "./esp8266/esp8266.o"
