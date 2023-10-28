@@ -20,7 +20,7 @@
 extern TIM_HandleTypeDef htim16;
 
 #define TIMER6_PRESCALAR (9 - 1)
-#define TIMER6_PEROID  (0)
+#define TIMER6_PEROID  (65535 - 1)
 
 
 /*Pin Configuration*/
@@ -33,7 +33,7 @@ extern TIM_HandleTypeDef htim16;
 
 /*Console onto the console windows*/
 
-void MX_TIM16_Init();
+void tim6_init();
 void console_buf_clr(char *console_buf , size_t *console_buf_len);
 void console_buf_wr(char *console_buf , size_t *console_buf_len);
 extern int _write(int file, char *ptr, int len);

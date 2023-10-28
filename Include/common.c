@@ -20,9 +20,11 @@ void Timer_Error_Handler(void)
   }
 }
 
-void MX_TIM16_Init(void)
+void tim6_init(void)
 {
   /* USER CODE END TIM16_Init 1 */
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
   htim16.Instance = TIM6;
   htim16.Init.Prescaler = TIMER6_PRESCALAR;
   htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -34,6 +36,14 @@ void MX_TIM16_Init(void)
   {
 	  Timer_Error_Handler();
   }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+   if (HAL_TIMEx_MasterConfigSynchronization(&htim16, &sMasterConfig) != HAL_OK)
+   {
+     Error_Handler();
+   }
+
+   HAL_TIM_Base_Start(&htim16);
   /* USER CODE END TIM16_Init 1 */
 }
 
