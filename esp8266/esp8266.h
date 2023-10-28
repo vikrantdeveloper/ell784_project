@@ -1,7 +1,6 @@
 #ifndef __ESP8266__
 
-#define UART_WIFI_CMD            USART2
-#define UART_CONSOLE             huart3
+
 #define CR                       "\r"
 #define NR                       "\n"
 

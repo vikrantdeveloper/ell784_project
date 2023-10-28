@@ -23,10 +23,10 @@ void Timer_Error_Handler(void)
 void MX_TIM16_Init(void)
 {
   /* USER CODE END TIM16_Init 1 */
-  htim16.Instance = TIM1;
-  htim16.Init.Prescaler = TIMER16_PRESCALAR;
+  htim16.Instance = TIM6;
+  htim16.Init.Prescaler = TIMER6_PRESCALAR;
   htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim16.Init.Period = TIMER16_PEROID;
+  htim16.Init.Period = TIMER6_PEROID;
   htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim16.Init.RepetitionCounter = 0;
   htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;

@@ -41,6 +41,25 @@ static uint32_t caltimepulse(GPIO_PinState level, uint32_t maxcount)
 	}
 	return count;
 }
+
+uint8_t dth11_check_resp(void)
+{
+	// Wait 20-40us for DHT to pull the line LOW
+	// delay (40);
+	if(TIMEOUT == caltimepulse(GPIO_PIN_SET, 40))
+		return 0xff;
+
+	// Wait 80us while line has been pulled LOW by DHT
+	if(TIMEOUT == caltimepulse(GPIO_PIN_RESET, 80))
+		return 0xff;
+
+	// Wait 80us while line has been pulled LOW by DHT
+	if(TIMEOUT == caltimepulse(GPIO_PIN_SET, 80))
+		return 0xff;
+
+	// Ready to read
+	return 1U;
+}
 uint8_t dth11_read()
 {
 	uint8_t result = 0U;
@@ -62,6 +81,31 @@ uint8_t dth11_read()
 		if(!mask)
 			HAL_Delay(10);
 		return result & mask;
+}
+void dth11_log(void)
+{
+	char buf[50];
+	sprintf(buf , "temp & hum is %f %f\r\n",  DTH11_buf_t.temp , DTH11_buf_t.humditiy);
+	size_t buf_len = strlen(buf) - 1;
+	DTH11_buf_t.log_buf(&buf[0] , &buf_len);
+
+}
+void dth11_read_temp_hum(void)
+{
+	 uint8_t Rh_byte1 = dth11_read();
+	 uint8_t Rh_byte2 = dth11_read();
+	 uint16_t hum = Rh_byte2;
+	 hum = hum | (Rh_byte1 << 8);
+	 DTH11_buf_t.humditiy = (float)hum / (1 << 8);
+
+	 uint8_t Temp_byte1 = dth11_read();
+	 uint8_t Temp_byte2 = dth11_read();
+	 uint16_t temp = Temp_byte2;
+	 temp = temp | (Temp_byte1 << 8);
+	 DTH11_buf_t.temp = (float)temp / (1 << 8);
+	 uint8_t P_byte = dth11_read();
+
+
 }
 void dth11_init()
 {

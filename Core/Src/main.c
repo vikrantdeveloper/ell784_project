@@ -13,7 +13,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "common.h"
 #include "esp8266.h"
+#include "dth11.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -84,8 +86,20 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART3_UART_Init();
+  MX_TIM16_Init();
 
   /* USER CODE BEGIN 2 */
+
+  if(0xff == dth11_check_resp())
+  {
+	  DTH11_buf_t.temp = -1.0;
+	  DTH11_buf_t.humditiy = -1.0;
+  }
+  else
+  {
+	dth11_read_temp_hum();
+	dth11_log();
+  }
   wifi_init();
   HAL_Delay(2000);
 
