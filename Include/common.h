@@ -19,7 +19,7 @@
 /*Initialise the timer*/
 extern TIM_HandleTypeDef htim16;
 
-#define TIMER6_PRESCALAR (9 - 1)
+#define TIMER6_PRESCALAR (16 - 1)
 #define TIMER6_PEROID  (65535 - 1)
 
 
@@ -29,7 +29,7 @@ extern TIM_HandleTypeDef htim16;
 
 /*WiFi Console Port*/
 #define UART_WIFI_CMD            USART2
-#define UART_CONSOLE             huart3
+#define UART_CONSOLE             USART3
 
 /*Console onto the console windows*/
 

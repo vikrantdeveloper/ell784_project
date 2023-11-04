@@ -83,6 +83,7 @@ int main(void)
   /* USER CODE BEGIN SysInit */
   MX_GPIO_Init();
   wifi_init();
+  console_init();
   tim6_init();
   dth11_init();
   /* USER CODE END SysInit */
@@ -104,30 +105,29 @@ int main(void)
 
   HAL_Delay(2000);
 
-#if defined WIFI_UART_COM
-  wifi_start();
-  HAL_Delay(2000);
-#endif
 
+#if defined WIFI_RST
   wifi_rst();
   HAL_Delay(5000);
-
-  Wifi_Uart_t.log_buf(&Wifi_Uart_t.WiFi_Rx[0], &Wifi_Uart_t.WiFi_Rx_len);
-  Wifi_Uart_t.log_clr(&Wifi_Uart_t.WiFi_Rx[0], &Wifi_Uart_t.WiFi_Rx_len);
+#endif
 
 #if defined WIFI_VERSION
   wifi_version();
   HAL_Delay(2000);
+  Wifi_Uart_t.log_buf(&Wifi_Uart_t.WiFi_Rx[0], &Wifi_Uart_t.WiFi_Rx_len);
+  Wifi_Uart_t.log_clr(&Wifi_Uart_t.WiFi_Rx[0], &Wifi_Uart_t.WiFi_Rx_len);
 #endif
 
-  wifi_mode(WIFI_ST_AP_MODE);
+
+
+  wifi_mode(WIFI_AP_MODE);
   HAL_Delay(2000);
-  wifi_ap_connect("Vikrant", "123456789");
+  wifi_ap_connect("vikrant", "123456789");
   HAL_Delay(8000);
   wifi_mac_add();
   HAL_Delay(5000);
-  tcp_server_conn();
-  HAL_Delay(5000);
+  //tcp_server_conn();
+  //HAL_Delay(5000);
 
   Wifi_Uart_t.log_buf(&Wifi_Uart_t.WiFi_Rx[0], &Wifi_Uart_t.WiFi_Rx_len);
 
