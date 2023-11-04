@@ -1,8 +1,0 @@
-../DTH11/dth11.c:7:13:micro_delay	2
-../DTH11/dth11.c:13:13:set_pin_direction	3
-../DTH11/dth11.c:33:17:caltimepulse	3
-../DTH11/dth11.c:45:9:dth11_check_resp	4
-../DTH11/dth11.c:63:9:dth11_read	6
-../DTH11/dth11.c:85:6:dth11_log	1
-../DTH11/dth11.c:93:6:dth11_read_temp_hum	1
-../DTH11/dth11.c:110:6:dth11_init	1
