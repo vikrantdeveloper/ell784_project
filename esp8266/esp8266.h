@@ -10,7 +10,7 @@
 #define WIFI_CONNECT_AP_CMD   	"AT+CWJAP=\"%s\",\"%s\"\r\n" 			            /*connect to access point ssid ,psk*/
 #define WIFI_GMR_CMD            "AT+GMR\r\n"
 #define WIFI_MAC_CMD            "AT+CIFSR\r\n"
-#define TCP_LOCAL_HOTSPOT       "AT+CIPSTART=\"TCP\",\"192.168.149.67\",8888\r\n"   /*tcp ip address and port number*/
+#define WIFI_IP_ADDR             "AT+CIPSTART=\"TCP\",\"%s\",%s\r\n"   /*tcp ip address and port number*/
 //#define TCP_LOCAL_HOTSPOT       "AT+CIPMUX?\r\n"
 
 #define WIFI_RX_LEN            512
@@ -69,6 +69,7 @@ wifi_api_status wifi_comm_check();
 wifi_api_status wifi_mac_add();
 wifi_api_status tcp_server_conn();
 wifi_api_status wifi_send_fl_data(float buf[] , int len);
+wifi_api_status wifi_log_thingspeak(char *key, int field, float buf[]);
 
 int _write(int file, char *ptr, int len);
 

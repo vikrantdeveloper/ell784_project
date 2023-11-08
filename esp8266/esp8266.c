@@ -118,7 +118,7 @@ wifi_api_status tcp_server_conn(char *ipadress , char *port)
 {
 	wifi_api_status LucStatus = MS_NOT_OK;
 	Wifi_Uart_t.WiFi_Tx = malloc(sizeof(char) * 100);
-	sprintf(Wifi_Uart_t.WiFi_Tx , WIFI_CONNECT_AP_CMD , ipadress , port);
+	sprintf(Wifi_Uart_t.WiFi_Tx , WIFI_IP_ADDR , ipadress , port);
 	LucStatus = uart_write(Wifi_Uart_t.WiFi_Tx);
 	free(Wifi_Uart_t.WiFi_Tx);
 	return LucStatus;
@@ -135,6 +135,13 @@ wifi_api_status wifi_send_fl_data(float buf[] , int len)
 		LucStatus = uart_byte_write(Wifi_Uart_t.fl_con_u8_pt.u);
 	}
 	return LucStatus;
+}
+wifi_api_status wifi_log_thingspeak(int APIkey)
+{
+	tcp_server_conn("44.195.236.116", "80");
+	wifi_api_status LucStatus = MS_NOT_OK;
+	Wifi_Uart_t.WiFi_Tx = malloc(sizeof(char) * 100);
+	sprintf (Wifi_Uart_t.WiFi_Tx, "GET https://api.thingspeak.com/update?api_key=J2ZEQNXPJKHH6768&field1=%d", APIkey);
 }
 /*
  * initialise the wifi - esp8266 via AT commands initialise the UART

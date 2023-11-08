@@ -4,28 +4,52 @@
 DTH11_buf DTH11_buf_t;
 extern TIM_HandleTypeDef htim16;
 
-static void micro_delay(uint32_t delay_cnt)
+static void micro_delay(uint16_t delay_cnt)
 {
 	__HAL_TIM_SET_COUNTER(&htim16, 0);
 	while ( __HAL_TIM_GET_COUNTER(&htim16) < delay_cnt);
 }
 
-static void set_pin_direction(DTH11_PIN_DIR cnt , GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
+static void set_pin_dir_OP(GPIO_TypeDef *GPIOx , uint32_t GPIO_Pin)
+{
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	GPIO_InitStruct.Pin = GPIO_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+}
+
+static void set_pin_dir_IP(GPIO_TypeDef *GPIOx , uint32_t GPIO_Pin)
 {
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 	GPIO_InitStruct.Pin = GPIO_Pin;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+}
+static void set_pin_direction(DTH11_PIN_DIR cnt , GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin)
+{
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	GPIO_InitStruct.Pin = GPIO_Pin;
+
+
 	switch(cnt)   /*Configure the mode of operation*/
 	{
 		case DTH11_PIN_DIR_IN:
 		{
+			GPIO_InitTypeDef GPIO_InitStruct = {0};
+			GPIO_InitStruct.Pin = GPIO_Pin;
+			GPIO_InitStruct.Pull = GPIO_NOPULL;
 			GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+			break;
 		}
-
 		case DTH11_PIN_DIR_OUT:
 		{
+			GPIO_InitTypeDef GPIO_InitStruct = {0};
+			GPIO_InitStruct.Pin = GPIO_Pin;
 			GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+			GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+			break;
 		}
 	}
 	HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
@@ -96,12 +120,14 @@ void dth11_read_temp_hum(void)
 	 uint8_t Rh_byte2 = dth11_read();
 	 uint16_t hum = Rh_byte2;
 	 hum = hum | (Rh_byte1 << 8);
+
 	 DTH11_buf_t.humditiy = (float)hum / (1 << 8);
 
 	 uint8_t Temp_byte1 = dth11_read();
 	 uint8_t Temp_byte2 = dth11_read();
 	 uint16_t temp = Temp_byte2;
 	 temp = temp | (Temp_byte1 << 8);
+
 	 DTH11_buf_t.temp = (float)temp / (1 << 8);
 	 uint8_t P_byte = dth11_read();
 
@@ -112,12 +138,15 @@ void dth11_init()
 	DTH11_buf_t.log_buf = &console_buf_wr;
 	DTH11_buf_t.log_clr = &console_buf_clr;
 
-    set_pin_direction(DTH11_PIN_DIR_OUT , DTH11_PORT, DTH11_PIN); /*configure the input pin as O/P*/
-    HAL_GPIO_WritePin(DTH11_PORT, DTH11_PIN, 1);
-    HAL_Delay(1500);
-    HAL_GPIO_WritePin(DTH11_PORT, DTH11_PIN, 0);   /*Wait for 18 Ms*/ /*Host sends a start signal*/
-    HAL_Delay(20000);
+	HAL_GPIO_WritePin (DTH11_PORT, DTH11_PIN, GPIO_PIN_SET);   // pull the pin high
+	HAL_Delay(1500);
 
-    set_pin_direction(DTH11_PIN_DIR_IN , DTH11_PORT, DTH11_PIN); /*configure the input pin as I/P , Host will receive response*/
+	set_pin_dir_OP(DTH11_PORT, DTH11_PIN); /*configure the Output pin as O/P*/
+
+    HAL_GPIO_WritePin(DTH11_PORT, DTH11_PIN, GPIO_PIN_RESET);
+    micro_delay(18000);
+    HAL_GPIO_WritePin(DTH11_PORT, DTH11_PIN, GPIO_PIN_SET);
+
+    set_pin_dir_IP(DTH11_PORT, DTH11_PIN); /*configure the input pin as I/P , Host will receive response*/
 
 }

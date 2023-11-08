@@ -24,6 +24,7 @@ void tim6_init(void)
 {
   /* USER CODE END TIM16_Init 1 */
   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_ClockConfigTypeDef sMasterClock = {0};
 
   htim16.Instance = TIM6;
   htim16.Init.Prescaler = TIMER6_PRESCALAR;
@@ -36,6 +37,7 @@ void tim6_init(void)
   {
 	  Timer_Error_Handler();
   }
+  sMasterClock.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
    if (HAL_TIMEx_MasterConfigSynchronization(&htim16, &sMasterConfig) != HAL_OK)

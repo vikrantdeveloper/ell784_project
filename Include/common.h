@@ -19,13 +19,13 @@
 /*Initialise the timer*/
 extern TIM_HandleTypeDef htim16;
 
-#define TIMER6_PRESCALAR (16 - 1)
+#define TIMER6_PRESCALAR (8 - 1)
 #define TIMER6_PEROID  (65535 - 1)
 
 
 /*Pin Configuration*/
 #define DTH11_PORT  GPIOB
-#define DTH11_PIN   GPIO_PIN_1
+#define DTH11_PIN   GPIO_PIN_2
 
 /*WiFi Console Port*/
 #define UART_WIFI_CMD            USART2
