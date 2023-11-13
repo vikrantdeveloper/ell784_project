@@ -35,7 +35,7 @@ typedef enum{
 typedef struct{
 
 	char *WiFi_Tx;
-	uint8_t WiFi_Tx_len;
+	size_t WiFi_Tx_len;
 	union fl_con_u8 {
 		 float f;
 		 uint8_t u[4];
@@ -69,7 +69,7 @@ wifi_api_status wifi_comm_check();
 wifi_api_status wifi_mac_add();
 wifi_api_status tcp_server_conn();
 wifi_api_status wifi_send_fl_data(float buf[] , int len);
-wifi_api_status wifi_log_thingspeak(char *key, int field, float buf[]);
+wifi_api_status wifi_log_thingspeak(char *APIkey , int bitfield , int buf[]);
 
 int _write(int file, char *ptr, int len);
 

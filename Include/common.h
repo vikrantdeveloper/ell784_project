@@ -31,6 +31,20 @@ extern TIM_HandleTypeDef htim16;
 #define UART_WIFI_CMD            USART2
 #define UART_CONSOLE             USART3
 
+/*WiFi Parameters*/
+#define WIFI_RST
+
+
+#define SSID  "Johan"
+#define PSK   "123456789"
+
+#define TCP_IP   "10.42.0.1"
+#define TCP_PORT  "8080"
+
+#define CHAR_KEY "J2ZEQNXPJKHH6768"
+
+
+
 /*Console onto the console windows*/
 
 void tim6_init();

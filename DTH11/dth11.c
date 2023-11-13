@@ -27,33 +27,6 @@ static void set_pin_dir_IP(GPIO_TypeDef *GPIOx , uint32_t GPIO_Pin)
 	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
 }
-static void set_pin_direction(DTH11_PIN_DIR cnt , GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin)
-{
-	GPIO_InitTypeDef GPIO_InitStruct = {0};
-	GPIO_InitStruct.Pin = GPIO_Pin;
-
-
-	switch(cnt)   /*Configure the mode of operation*/
-	{
-		case DTH11_PIN_DIR_IN:
-		{
-			GPIO_InitTypeDef GPIO_InitStruct = {0};
-			GPIO_InitStruct.Pin = GPIO_Pin;
-			GPIO_InitStruct.Pull = GPIO_NOPULL;
-			GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-			break;
-		}
-		case DTH11_PIN_DIR_OUT:
-		{
-			GPIO_InitTypeDef GPIO_InitStruct = {0};
-			GPIO_InitStruct.Pin = GPIO_Pin;
-			GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-			GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-			break;
-		}
-	}
-	HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
-}
 static uint32_t caltimepulse(GPIO_PinState level, uint32_t maxcount)
 {
 	uint32_t count = 0;

@@ -18,98 +18,35 @@
 #include "dth11.h"
 /* USER CODE END Includes */
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
+//TIM_HandleTypeDef htim6;
+//TIM_HandleTypeDef htim7;
+//
+//UART_HandleTypeDef huart2;
+//UART_HandleTypeDef huart3;
 
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-
-TIM_HandleTypeDef htim6;
-TIM_HandleTypeDef htim7;
-
-UART_HandleTypeDef huart2;
-UART_HandleTypeDef huart3;
-
-PCD_HandleTypeDef hpcd_USB_OTG_FS;
-
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+
 /* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  /* USER CODE BEGIN 2 */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
   MX_GPIO_Init();
   wifi_init();
   console_init();
   tim6_init();
-  //dth11_init();
-  /* USER CODE END SysInit */
-
-
-  /* USER CODE BEGIN 2 */
-//  uint8_t resp = dth11_check_resp();
-//  if(resp == 0xff)
-//  {
-//	  DTH11_buf_t.temp = -1.0;
-//	  DTH11_buf_t.humditiy = -1.0;
-//  }
-//  else
-//  {
-//	dth11_read_temp_hum();
-//	dth11_log();
-//  }
-//
-//  dth11_read_temp_hum();
-//  dth11_log();
-//  HAL_Delay(2000);
-
 
 #if defined WIFI_RST
   wifi_rst();
   HAL_Delay(5000);
+  Wifi_Uart_t.log_clr(&Wifi_Uart_t.WiFi_Rx[0], &Wifi_Uart_t.WiFi_Rx_len);
 #endif
 
 #if defined WIFI_VERSION
@@ -119,26 +56,24 @@ int main(void)
   Wifi_Uart_t.log_clr(&Wifi_Uart_t.WiFi_Rx[0], &Wifi_Uart_t.WiFi_Rx_len);
 #endif
 
-
-
   wifi_mode(WIFI_AP_MODE);
   HAL_Delay(2000);
-  wifi_ap_connect("vikrant", "123456789");  /*connect to 2.4 GHZ*/
+  wifi_ap_connect(SSID, PSK);  /*connect to 2.4 GHZ*/
   HAL_Delay(8000);
   wifi_mac_add();
   HAL_Delay(5000);
-  tcp_server_conn("44.195.236.116", "80");
+  tcp_server_conn(TCP_IP, TCP_PORT);
   HAL_Delay(5000);
-
   Wifi_Uart_t.log_buf(&Wifi_Uart_t.WiFi_Rx[0], &Wifi_Uart_t.WiFi_Rx_len);
+  Wifi_Uart_t.log_clr(&Wifi_Uart_t.WiFi_Rx[0], &Wifi_Uart_t.WiFi_Rx_len);
+
+  float buf[2];
 
   /* USER CODE END 2 */
 
-  /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
 	  	dth11_init();
 	    uint8_t resp = dth11_check_resp();
 	    if(resp == 0xff)
@@ -152,7 +87,20 @@ int main(void)
             dth11_log();
 	    }
 	    HAL_Delay(1000);
-	    wifi_log_thingspeak()
+
+	    buf[0] = DTH11_buf_t.temp;
+	    buf[1] = DTH11_buf_t.humditiy;
+
+	    tcp_server_conn(TCP_IP, TCP_PORT);
+	    HAL_Delay(3000);
+
+	    wifi_send_fl_data(&buf[0] , 2);
+	    //wifi_log_thingspeak(CHAR_KEY, 2, &buf[0]);
+	    HAL_Delay(1000);
+
+
+	    Wifi_Uart_t.log_buf(&Wifi_Uart_t.WiFi_Rx[0], &Wifi_Uart_t.WiFi_Rx_len);
+	    Wifi_Uart_t.log_clr(&Wifi_Uart_t.WiFi_Rx[0], &Wifi_Uart_t.WiFi_Rx_len);
   }
   /* USER CODE END WHILE */
 }
@@ -213,41 +161,6 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-}
-
-/**
-  * @brief USB_OTG_FS Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USB_OTG_FS_PCD_Init(void)
-{
-
-  /* USER CODE BEGIN USB_OTG_FS_Init 0 */
-
-  /* USER CODE END USB_OTG_FS_Init 0 */
-
-  /* USER CODE BEGIN USB_OTG_FS_Init 1 */
-
-  /* USER CODE END USB_OTG_FS_Init 1 */
-  hpcd_USB_OTG_FS.Instance = USB_OTG_FS;
-  hpcd_USB_OTG_FS.Init.dev_endpoints = 6;
-  hpcd_USB_OTG_FS.Init.dma_enable = DISABLE;
-  hpcd_USB_OTG_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
-  hpcd_USB_OTG_FS.Init.Sof_enable = ENABLE;
-  hpcd_USB_OTG_FS.Init.low_power_enable = DISABLE;
-  hpcd_USB_OTG_FS.Init.lpm_enable = DISABLE;
-  hpcd_USB_OTG_FS.Init.battery_charging_enable = ENABLE;
-  hpcd_USB_OTG_FS.Init.vbus_sensing_enable = ENABLE;
-  hpcd_USB_OTG_FS.Init.use_dedicated_ep1 = DISABLE;
-  if (HAL_PCD_Init(&hpcd_USB_OTG_FS) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USB_OTG_FS_Init 2 */
-
-  /* USER CODE END USB_OTG_FS_Init 2 */
-
 }
 
 /**

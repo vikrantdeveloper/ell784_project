@@ -64,9 +64,9 @@ static wifi_api_status uart_write(char *buffer)
 static wifi_api_status uart_byte_write(uint8_t *buf)
 {
 	if(HAL_UART_Transmit(&wifi_cmd_uart, (uint8_t *)buf, Wifi_Uart_t.WiFi_Tx_len, 1000) == HAL_OK)
-			return MS_OK;
-		else
-			return MS_NOT_OK;
+		return MS_OK;
+	else
+		return MS_NOT_OK;
 }
 wifi_api_status wifi_mode(wifi_mode_config cnt)
 {
@@ -127,7 +127,9 @@ wifi_api_status wifi_send_fl_data(float buf[] , int len)
 {
 	wifi_api_status LucStatus = MS_NOT_OK;
 	Wifi_Uart_t.WiFi_Tx = malloc(sizeof(char) * 100);
-	sprintf (Wifi_Uart_t.WiFi_Tx, "AT+CIPSEND=%d\r\n", 4 * (1 + len));
+	sprintf (Wifi_Uart_t.WiFi_Tx, "AT+CIPSEND=%d\r\n", 4 * (len));
+	LucStatus = uart_write(Wifi_Uart_t.WiFi_Tx);
+	HAL_Delay(1000);
 	for(int j = 0; j < len; j++)
 	{
 		Wifi_Uart_t.fl_con_u8_pt.f = buf[j];
@@ -136,12 +138,34 @@ wifi_api_status wifi_send_fl_data(float buf[] , int len)
 	}
 	return LucStatus;
 }
-wifi_api_status wifi_log_thingspeak(int APIkey)
+wifi_api_status wifi_log_thingspeak(char *APIkey , int bitfield , int buf[])
 {
-	tcp_server_conn("44.195.236.116", "80");
+	char field_buf[100];
+	char cmd_buf[200];
+	int cmd_buf_len = 0;
+
 	wifi_api_status LucStatus = MS_NOT_OK;
 	Wifi_Uart_t.WiFi_Tx = malloc(sizeof(char) * 100);
-	sprintf (Wifi_Uart_t.WiFi_Tx, "GET https://api.thingspeak.com/update?api_key=J2ZEQNXPJKHH6768&field1=%d", APIkey);
+
+	tcp_server_conn(TCP_IP, TCP_PORT); /*connect to server*/
+
+	sprintf (cmd_buf, "GET https://api.thingspeak.com/update?api_key=%s", APIkey);
+	for (int i=0; i < bitfield; i++)
+	{
+			sprintf(field_buf, "&field%u=%d",i+1, buf[i]);
+			strcat (cmd_buf, field_buf);
+	}
+	strcat(cmd_buf, "\r\n");
+	cmd_buf_len = strlen(cmd_buf);
+
+	sprintf(Wifi_Uart_t.WiFi_Tx , "AT+CIPSEND=%d\r\n", cmd_buf_len);
+	LucStatus = uart_write(Wifi_Uart_t.WiFi_Tx);
+	if (LucStatus == MS_OK)
+	{
+		LucStatus = uart_write(cmd_buf);
+	}
+	//free(Wifi_Uart_t.WiFi_Tx);
+	return LucStatus;
 }
 /*
  * initialise the wifi - esp8266 via AT commands initialise the UART
